@@ -21,6 +21,12 @@ try {
 
 
 async function getTenNewestRecipes() {
+  let recipes = await Recipe.findAll({order: [["createdAt", "DESC"]], limit: 10});
+  recipes = await recipes.map(item => {
+  return item.toJSON();
+  });
+
+  return recipes;
   // Use the findAll method of the Recipe object to return the recipes.
   // Use the options for findAll to **limit** the number of objects and order it
   //   appropriately. (That's a hint. Look through that documentation for that
