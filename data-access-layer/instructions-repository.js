@@ -21,20 +21,27 @@ try {
 
 
 async function createNewInstruction(specification, recipeId) {
-  const instructions = await Instruction.findAll({
+
+
+  let instructions = await Instruction.findAll({
     where: {
-      specification: specification,
+      recipeId: recipeId,
     },
-  });
-
-  const obj = await instructions.create({
-      recipeId: recipeId
-    }
-  );
-
-  return await obj.findAll({
     order: [["listOrder", "DESC"]],
+    limit: 1
+  });
+  let maxNum = 1;
+  if (instructions.length > 0){
+    instructions = await instructions[0].toJSON();
+    maxNum = instructions.listOrder + 1;
+  }
+  let newInstruction = await Instruction.create({
+    specification: specification,
+    listOrder: maxNum,
+    recipeId: recipeId
   })
+
+  return newInstruction;
 
 
   // Use the findAll method of the Instruction object to find all the

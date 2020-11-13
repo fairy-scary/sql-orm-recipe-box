@@ -45,7 +45,7 @@ async function getTenNewestRecipes() {
 
 async function getRecipeById(id) {
 
-  const recipe = await Recipe.findbyPk(id, {
+  const recipe = await Recipe.findByPk(id, {
     include: [
       Instruction,
       {
@@ -53,7 +53,7 @@ async function getRecipeById(id) {
         include: [MeasurementUnit]
       }
     ]
-  }); 
+  });
 
   return recipe.toJSON();
   // Use the findByPk method of the Recipe object to return the recipe. Use
@@ -94,9 +94,9 @@ async function getRecipeById(id) {
 
 
 async function deleteRecipe(id) {
-  const trash = await Recipe.findbyPk(id);
+  const trash = await Recipe.findByPk(id);
   await trash.destroy();
-  await sequelize.close()
+  // await sequelize.close()
 
   // Use the findByPk method of the Recipe object to get the object and, then,
   // destroy it. Or, use the Model.destroy({ ... where ... }) method that you
@@ -118,9 +118,12 @@ async function createNewRecipe(title) {
 }
 
 async function searchRecipes(term) {
+  let searchLine = term;
   const titleSearch = await Recipe.findAll({
     where: {
-      title: '%\${term}%', 
+      title: {
+        [Op.iLike]: searchLine
+      },
     }
   });
 
