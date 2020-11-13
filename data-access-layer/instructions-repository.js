@@ -21,6 +21,22 @@ try {
 
 
 async function createNewInstruction(specification, recipeId) {
+  const instructions = await Instruction.findAll({
+    where: {
+      specification: specification,
+    },
+  });
+
+  const obj = await instructions.create({
+      recipeId: recipeId
+    }
+  );
+
+  return await obj.findAll({
+    order: [["listOrder", "DESC"]],
+  })
+
+
   // Use the findAll method of the Instruction object to find all the
   // instructions for the specified recipe.
   //

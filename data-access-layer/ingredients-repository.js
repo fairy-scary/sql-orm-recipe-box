@@ -22,7 +22,13 @@ try {
 
 async function createNewIngredient(amount, recipeId, measurementUnitId, foodStuff) {
 
-  await Ingredient.create({ amount: amount, recipeId: recipeId, measurementUnitId: measurementUnitId, foodStuff: foodStuff})
+  let ingredient = await Ingredient.create({ 
+    amount: amount, 
+    recipeId: recipeId, 
+    measurementUnitId: measurementUnitId, 
+    foodStuff: foodStuff});
+
+  return ingredient.toJSON();
 
   // Use the create method of the Ingredient object to create a new object.
   //

@@ -21,6 +21,7 @@ try {
 
 
 async function getTenNewestRecipes() {
+
   let recipes = await Recipe.findAll({order: [["createdAt", "DESC"]], limit: 10});
   recipes = await recipes.map(item => {
   return item.toJSON();
@@ -43,6 +44,18 @@ async function getTenNewestRecipes() {
 }
 
 async function getRecipeById(id) {
+
+  const recipe = await Recipe.findbyPk(id, {
+    include: [
+      Instruction,
+      {
+        model:Ingredient,
+        include: [MeasurementUnit]
+      }
+    ]
+  }); 
+
+  return recipe.toJSON();
   // Use the findByPk method of the Recipe object to return the recipe. Use
   // nested eager loading to load the associated instructions, ingredients, and
   // measurement units.
@@ -79,7 +92,12 @@ async function getRecipeById(id) {
   //       https://sequelize.org/v5/manual/models-usage.html#nested-eager-loading
 }
 
+
 async function deleteRecipe(id) {
+  const trash = await Recipe.findbyPk(id);
+  await trash.destroy();
+  await sequelize.close()
+
   // Use the findByPk method of the Recipe object to get the object and, then,
   // destroy it. Or, use the Model.destroy({ ... where ... }) method that you
   // saw in the video.
@@ -88,6 +106,11 @@ async function deleteRecipe(id) {
 }
 
 async function createNewRecipe(title) {
+  const newRecipe = await Recipe.create({
+    title: title,
+  });
+
+  return await newRecipe.toJSON();
   // Use the create method of the Recipe object to create a new object and
   // return it.
   //
@@ -95,6 +118,13 @@ async function createNewRecipe(title) {
 }
 
 async function searchRecipes(term) {
+  const titleSearch = await Recipe.findAll({
+    where: {
+      title: '%\${term}%', 
+    }
+  });
+
+  return titleSearch;
   // Use the findAll method of the Recipe object to search for recipes with the
   // given term in its title
   //
